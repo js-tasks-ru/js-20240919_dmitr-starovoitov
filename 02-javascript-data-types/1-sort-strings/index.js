@@ -5,25 +5,14 @@
  * @returns {string[]}
  */
 export function sortStrings(arr, param = "asc") {
-  const sorted = arr
-    .slice()
-    .sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase(), "ru"));
+  const locales = ["ru", "en"];
+  const option = { sensitivity: "variant", caseFirst: "upper" };
+  const collator = new Intl.Collator(locales, option);
+  const sortDesc = (a, b) => collator.compare(b, a);
+  const sortAsc = (a, b) => collator.compare(a, b);
 
-  for (let i = 0; i < sorted.length - 1; i++) {
-    const firstElem = sorted[i];
-    const secondElem = sorted[i + 1];
+  const sortedArr =
+    param === "asc" ? arr.slice().sort(sortAsc) : arr.slice().sort(sortDesc);
 
-    if (
-      firstElem.toLowerCase().localeCompare(secondElem.toLowerCase()) === 0 &&
-      secondElem[0] === firstElem[0].toUpperCase()
-    ) {
-      [sorted[i], sorted[i + 1]] = [sorted[i + 1], sorted[i]];
-    }
-  }
-
-  if (param === "desc") {
-    return sorted.reverse();
-  }
-
-  return sorted;
+  return sortedArr;
 }
