@@ -4,14 +4,15 @@
  * @param {...string} fields - the properties paths to omit
  * @returns {object} - returns the new object
  */
+
 export const omit = (obj, ...fields) => {
-  if ([...fields].length !== 0) {
-    return Object.entries(obj).reduce((obj, current) => {
-      if (![...fields].includes(current[0])) {
-        obj[current[0]] = current[1];
-      }
-      return obj;
-    }, {});
-  }
-  return {};
+  let finalObj = {};
+
+  Object.entries(obj).forEach((i) => {
+    if (!fields.includes(i[0])) {
+      finalObj[i[0]] = i[1];
+    }
+  });
+
+  return finalObj;
 };
