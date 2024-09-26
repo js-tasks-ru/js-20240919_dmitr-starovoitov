@@ -6,7 +6,7 @@
  */
 
 export const pick = (obj, ...fields) => {
-  let finalObj = {};
+  const finalObj = {};
 
   fields.find((i) => {
     if (i in obj) {

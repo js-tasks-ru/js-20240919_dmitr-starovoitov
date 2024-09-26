@@ -6,7 +6,7 @@
  */
 
 export const omit = (obj, ...fields) => {
-  let finalObj = {};
+  const finalObj = {};
 
   Object.entries(obj).forEach((i) => {
     if (!fields.includes(i[0])) {
