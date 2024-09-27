@@ -7,7 +7,7 @@ export function invertObj(obj) {
   return obj
     ? Object.entries(obj).reduce((acc, current) => {
         acc[current[1]] = current[0];
-        return accumulator;
+        return acc;
       }, {})
     : undefined;
 }
