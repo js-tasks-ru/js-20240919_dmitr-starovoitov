@@ -31,7 +31,7 @@ export function trimSymbols(string, size) {
       return string;
   }
 
-  for (let char of string.split("")) {
+  for (let char of string) {
     switch (trimHelper.current) {
       case char:
         trimHelper.counter < size ? (trimHelper.finalStr += char) : null;
