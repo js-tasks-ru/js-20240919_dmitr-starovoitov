@@ -99,7 +99,7 @@ export default class SortableTable {
             ? (a, b) => collator.compare(a[field], b[field])
             : (a, b) => collator.compare(b[field], a[field]);
         this.data.sort(sortFunc);
-        this.rerenderBody();
+        break;
 
       case "number":
         sortFunc =
@@ -107,8 +107,10 @@ export default class SortableTable {
             ? (a, b) => a[field] - b[field]
             : (a, b) => b[field] - a[field];
         this.data = this.data.sort(sortFunc);
-        this.rerenderBody();
+        break;
     }
+
+    this.rerenderBody();
   }
 
   rerenderBody() {
