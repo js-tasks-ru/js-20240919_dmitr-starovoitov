@@ -42,7 +42,7 @@ export default class NotificationMessage {
 
   remove() {
     this.timerId = setTimeout(() => {
-      this.destroy();
+      this.element?.remove();
     }, this.duration);
   }
 
@@ -50,7 +50,6 @@ export default class NotificationMessage {
     if (this.timerId) {
       clearTimeout(this.timerId);
     }
-    this.element.remove();
-    NotificationMessage.lastShownComponent = null;
+    this.element?.remove();
   }
 }

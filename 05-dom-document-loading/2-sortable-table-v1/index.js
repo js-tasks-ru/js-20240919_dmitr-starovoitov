@@ -1,4 +1,8 @@
 export default class SortableTable {
+  static collator = new Intl.Collator(["ru", "en"], {
+    sensitivity: "variant",
+  });
+
   constructor(headerConfig = [], data = []) {
     this.headerConfig = headerConfig;
     this.data = data;
@@ -34,7 +38,11 @@ export default class SortableTable {
 
   createBody() {
     return `<div data-element="body" class="sortable-table__body">
-    ${this.data.map((item) => this.createBodyRow(item)).join("")}</div>`;
+    ${this.createBodyContent()}</div>`;
+  }
+
+  createBodyContent() {
+    return this.data.map((item) => this.createBodyRow(item)).join("");
   }
 
   createBodyRow(item) {
@@ -91,13 +99,10 @@ export default class SortableTable {
 
     switch (config.sortType) {
       case "string":
-        const collator = new Intl.Collator(["ru", "en"], {
-          sensitivity: "variant",
-        });
         sortFunc =
           order === "asc"
-            ? (a, b) => collator.compare(a[field], b[field])
-            : (a, b) => collator.compare(b[field], a[field]);
+            ? (a, b) => SortableTable.collator.compare(a[field], b[field])
+            : (a, b) => SortableTable.collator.compare(b[field], a[field]);
         this.data.sort(sortFunc);
         break;
 
@@ -114,11 +119,7 @@ export default class SortableTable {
   }
 
   rerenderBody() {
-    this.subElements.body?.remove();
-
-    this.subElements.header?.insertAdjacentHTML("afterend", this.createBody());
-
-    this.subElements.body = this.element.querySelector('[data-element="body"]');
+    this.subElements.body.innerHTML = this.createBodyContent();
   }
 
   destroy() {
