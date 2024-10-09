@@ -38,10 +38,10 @@ export default class SortableTableV2 extends SortableTableV1 {
         </span>`;
   }
 
-  handleHeaderClick = (event) => {
+  handleHeaderPointerDown = (event) => {
     const headerCell = event.target.closest('[data-sortable="true"]');
 
-    if (!headerCell) return;
+    if (!headerCell || !this.subElements.header?.contains(headerCell)) return;
 
     const currentOrder = headerCell.dataset.order;
 
@@ -67,14 +67,14 @@ export default class SortableTableV2 extends SortableTableV1 {
   createListeners() {
     this.subElements.header?.addEventListener(
       "pointerdown",
-      this.handleHeaderClick
+      this.handleHeaderPointerDown
     );
   }
 
   destroyListeners() {
     this.subElements.header?.removeEventListener(
       "pointerdown",
-      this.handleHeaderClick
+      this.handleHeaderPointerDown
     );
   }
 
