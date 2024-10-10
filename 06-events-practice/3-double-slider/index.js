@@ -1,6 +1,6 @@
 export default class DoubleSlider {
-  minPriceId = "minValue";
-  maxPriceId = "maxValue";
+  minPriceAttr = "from";
+  maxPriceAttr = "to";
 
   leftTogglePercent;
   rightTogglePercent;
@@ -21,8 +21,8 @@ export default class DoubleSlider {
     this.minValue = options.min;
     this.maxValue = options.max;
     this.formatValue = options.formatValue;
-    this.from = options.selected.from;
-    this.to = options.selected.to;
+    this.from = options.selected?.from || options.min;
+    this.to = options.selected?.to || options.max;
     this.element = this.createElement();
 
     this.subElements = {
@@ -30,8 +30,12 @@ export default class DoubleSlider {
       leftToggle: this.element?.querySelector(".range-slider__thumb-left"),
       righToggle: this.element?.querySelector(".range-slider__thumb-right"),
       sliderArea: this.element?.querySelector(".range-slider__inner"),
-      minPrice: this.element?.querySelector(`[data-id="${this.minPriceId}"]`),
-      maxPrice: this.element?.querySelector(`[data-id="${this.maxPriceId}"]`),
+      minPrice: this.element?.querySelector(
+        `[data-element="${this.minPriceAttr}"]`
+      ),
+      maxPrice: this.element?.querySelector(
+        `[data-element="${this.maxPriceAttr}"]`
+      ),
     };
 
     this.init();
@@ -46,13 +50,17 @@ export default class DoubleSlider {
 
   createElementTemplate() {
     return `<div class="range-slider">
-    <span data-id="${this.minPriceId}">${this.formatValue(this.from)}</span>
+    <span data-element="${this.minPriceAttr}">${this.formatValue(
+      this.from
+    )}</span>
     <div class="range-slider__inner">
       <span class="range-slider__progress"></span>
       <span class="range-slider__thumb-left"></span>
       <span class="range-slider__thumb-right"></span>
     </div>
-    <span data-id="${this.maxPriceId}">${this.formatValue(this.to)}</span>
+    <span data-element="${this.maxPriceAttr}">${this.formatValue(
+      this.to
+    )}</span>
   </div>`;
   }
 
@@ -84,7 +92,7 @@ export default class DoubleSlider {
     this.subElements.maxPrice.textContent = this.formatValue(price);
   }
 
-  calculatePercentForOnePixel() {
+  calculatePercentInOnePixel() {
     this.percentInOnePixel = +(
       this.subElements.sliderArea.getBoundingClientRect().width / 100
     ).toFixed(2);
@@ -97,6 +105,18 @@ export default class DoubleSlider {
       return +((currentX - startX) / this.percentInOnePixel).toFixed(2);
     } else if (classList.contains("range-slider__thumb-right")) {
       return +((startX - currentX) / this.percentInOnePixel).toFixed(2);
+    }
+  }
+
+  recalculatePriceForPercentValue(percent, isLeft) {
+    if (isLeft) {
+      this.from = Math.round(
+        this.minValue + ((this.maxValue - this.minValue) * percent) / 100
+      );
+    } else {
+      this.to = Math.round(
+        this.maxValue - ((this.maxValue - this.minValue) * percent) / 100
+      );
     }
   }
 
@@ -122,9 +142,9 @@ export default class DoubleSlider {
       );
 
       this.renderLeftToggle(newPercentValue);
-      this.renderMinPrice(
-        Math.round(((this.to - this.minValue) * newPercentValue) / 100)
-      );
+      this.recalculatePriceForPercentValue(newPercentValue, true);
+      this.renderMinPrice(this.from);
+
       return { isLeft: true, value: newPercentValue };
     } else if (classList.contains("range-slider__thumb-right")) {
       newPercentValue = this.checkBoundaries(
@@ -133,9 +153,9 @@ export default class DoubleSlider {
       );
 
       this.renderRightToggle(newPercentValue);
-      this.renderMaxPrice(
-        Math.round(((this.maxValue - this.from) * newPercentValue) / 100)
-      );
+      this.recalculatePriceForPercentValue(newPercentValue, false);
+      this.renderMaxPrice(this.to);
+
       return { isLeft: false, value: newPercentValue };
     }
   }
@@ -143,7 +163,7 @@ export default class DoubleSlider {
   handleSliderPointerDown = (event) => {
     const pointerDownEvent = event;
     const startX = event.clientX;
-    this.calculatePercentForOnePixel();
+    this.calculatePercentInOnePixel();
 
     let newToggleValueData;
 
@@ -162,6 +182,13 @@ export default class DoubleSlider {
       newToggleValueData.isLeft
         ? (this.leftTogglePercent = newToggleValueData.value)
         : (this.rightTogglePercent = newToggleValueData.value);
+
+      pointerDownEvent.target.dispatchEvent(
+        new CustomEvent("dispatchEvent", {
+          bubbles: true,
+          detail: { from: this.from, to: this.to },
+        })
+      );
 
       document.removeEventListener("pointermove", handlePointerMove);
       document.removeEventListener("pointerup", handlePointerUp);
@@ -194,6 +221,7 @@ export default class DoubleSlider {
   }
 
   destroy() {
+    this.element?.remove();
     this.destroyListeners();
   }
 }
