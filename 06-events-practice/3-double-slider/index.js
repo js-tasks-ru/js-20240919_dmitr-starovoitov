@@ -15,8 +15,8 @@ export default class DoubleSlider {
       selected: {},
     }
   ) {
-    this.minValue = options.min;
-    this.maxValue = options.max;
+    this.min = options.min;
+    this.max = options.max;
     this.formatValue = options.formatValue;
     this.from = options.selected?.from || options.min;
     this.to = options.selected?.to || options.max;
@@ -62,10 +62,10 @@ export default class DoubleSlider {
   }
 
   init() {
-    const maxRange = this.maxValue - this.minValue;
+    const maxRange = this.max - this.min;
 
-    this.leftTogglePercent = ((this.from - this.minValue) * 100) / maxRange;
-    this.rightTogglePercent = ((this.maxValue - this.to) * 100) / maxRange;
+    this.leftTogglePercent = ((this.from - this.min) * 100) / maxRange;
+    this.rightTogglePercent = ((this.max - this.to) * 100) / maxRange;
 
     this.renderLeftToggle(this.leftTogglePercent);
     this.renderRightToggle(this.rightTogglePercent);
@@ -108,12 +108,10 @@ export default class DoubleSlider {
   recalculatePriceForPercentValue(percent, isLeft) {
     if (isLeft) {
       this.from = Math.round(
-        this.minValue + ((this.maxValue - this.minValue) * percent) / 100
+        this.min + ((this.max - this.min) * percent) / 100
       );
     } else {
-      this.to = Math.round(
-        this.maxValue - ((this.maxValue - this.minValue) * percent) / 100
-      );
+      this.to = Math.round(this.max - ((this.max - this.min) * percent) / 100);
     }
   }
 
