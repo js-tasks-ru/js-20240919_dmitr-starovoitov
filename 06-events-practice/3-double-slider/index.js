@@ -178,8 +178,8 @@ export default class DoubleSlider {
         ? (this.leftTogglePercent = newToggleValueData.value)
         : (this.rightTogglePercent = newToggleValueData.value);
 
-      pointerDownEvent.target.dispatchEvent(
-        new CustomEvent("dispatchEvent", {
+      this.element?.dispatchEvent(
+        new CustomEvent("range-select", {
           bubbles: true,
           detail: { from: this.from, to: this.to },
         })
