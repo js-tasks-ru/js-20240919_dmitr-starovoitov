@@ -12,10 +12,7 @@ export default class DoubleSlider {
       min: 100,
       max: 200,
       formatValue: (value) => "$" + value,
-      selected: {
-        from: 120,
-        to: 150,
-      },
+      selected: {},
     }
   ) {
     this.minValue = options.min;
@@ -26,11 +23,11 @@ export default class DoubleSlider {
     this.element = this.createElement();
 
     this.subElements = {
-      progress: this.element?.querySelector(".range-slider__progress"),
-      leftToggle: this.element?.querySelector(".range-slider__thumb-left"),
-      righToggle: this.element?.querySelector(".range-slider__thumb-right"),
-      sliderArea: this.element?.querySelector(".range-slider__inner"),
-      minPrice: this.element?.querySelector(
+      progress: this.element.querySelector(".range-slider__progress"),
+      leftToggle: this.element.querySelector(".range-slider__thumb-left"),
+      righToggle: this.element.querySelector(".range-slider__thumb-right"),
+      sliderArea: this.element.querySelector(".range-slider__inner"),
+      minPrice: this.element.querySelector(
         `[data-element="${this.minPriceAttr}"]`
       ),
       maxPrice: this.element?.querySelector(
