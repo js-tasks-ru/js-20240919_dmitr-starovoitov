@@ -61,12 +61,16 @@ export default class DoubleSlider {
 
   init() {
     const maxRange = this.max - this.min;
+    const left = this.from - this.min;
+    const right = this.to - this.min;
+    this.leftTogglePercent = (left * 100) / maxRange;
+    this.rightTogglePercent = (right * 100) / maxRange;
 
-    this.leftTogglePercent = ((this.from - this.min) * 100) / maxRange;
-    this.rightTogglePercent = ((this.max - this.to) * 100) / maxRange;
-
-    this.renderLeftToggle(this.leftTogglePercent);
-    this.renderRightToggle(this.rightTogglePercent);
+    this.subElements.progress.style.left = this.leftTogglePercent + "%";
+    this.subElements.leftToggle.style.left = this.leftTogglePercent + "%";
+    this.subElements.progress.style.right = 100 - this.rightTogglePercent + "%";
+    this.subElements.righToggle.style.right =
+      100 - this.rightTogglePercent + "%";
   }
 
   renderLeftToggle() {
@@ -75,93 +79,55 @@ export default class DoubleSlider {
   }
 
   renderRightToggle() {
-    this.subElements.progress.style.right = this.rightTogglePercent + "%";
-    this.subElements.righToggle.style.right = this.rightTogglePercent + "%";
+    this.subElements.progress.style.right = 100 - this.rightTogglePercent + "%";
+    this.subElements.righToggle.style.right =
+      100 - this.rightTogglePercent + "%";
   }
 
   renderMinPrice() {
-    this.subElements.minPrice.textContent = this.formatValue(this.from);
+    this.subElements.minPrice.textContent = this.formatValue(
+      Math.round(this.from)
+    );
   }
 
   renderMaxPrice() {
-    this.subElements.maxPrice.textContent = this.formatValue(this.to);
-  }
-
-  calculateMinPrice() {
-    this.from = Math.round(
-      this.min + ((this.max - this.min) * this.leftTogglePercent) / 100
+    this.subElements.maxPrice.textContent = this.formatValue(
+      Math.round(this.to)
     );
-  }
-
-  calculateMaxPrice() {
-    this.to = Math.round(
-      this.max - ((this.max - this.min) * this.rightTogglePercent) / 100
-    );
-  }
-
-  calculateLeftTogglePercent(startX, left, right) {
-    let percent = ((startX - left) * 100) / (right - left);
-    percent =
-      100 - percent < this.rightTogglePercent
-        ? 100 - this.rightTogglePercent
-        : percent;
-    this.leftTogglePercent = percent;
-    return percent;
-  }
-
-  calculateRightTogglePercent(startX, left, right) {
-    let percent = 100 - ((startX - left) * 100) / (right - left);
-    percent =
-      100 - percent < this.leftTogglePercent
-        ? 100 - this.leftTogglePercent
-        : percent;
-    this.rightTogglePercent = percent;
-    return percent;
   }
 
   normalize = (min, max, value) => Math.max(min, Math.min(max, value));
-
-  getSliderBoundaries() {
-    let { left, right } = this.subElements.sliderArea.getBoundingClientRect();
-
-    console.log(
-      `SLIDER RECT: LEFT -> ${
-        this.subElements.sliderArea.getBoundingClientRect().left
-      } / RIGHT ->${this.subElements.sliderArea.getBoundingClientRect().right}`
-    );
-
-    left -= this.subElements.leftToggle.getBoundingClientRect().width;
-
-    console.log(
-      `TOGGLE LEFT WIDTH -> ${
-        this.subElements.leftToggle.getBoundingClientRect().width
-      }`
-    );
-
-    return { left, right };
-  }
 
   handleSliderPointerDown = (event) => {
     const isLeft = event.target === this.subElements.leftToggle ? true : false;
 
     const handlePointerMove = (event) => {
-      const { left, right } = this.getSliderBoundaries();
-      const x = this.normalize(left, right, event.clientX);
-      if (event.clientX === 0) {
-        console.log(
-          `THIS IS X:${x} THIS IS left: ${left}, THIS IS right: ${right}`
-        );
-      }
+      const { left, right } =
+        this.subElements.sliderArea.getBoundingClientRect();
+      const x = this.normalize(left, right, event.clientX) - left;
+      const percent = (x / (right - left)) * 100;
 
       if (isLeft) {
-        this.calculateLeftTogglePercent(x, left, right);
+        this.leftTogglePercent = this.normalize(
+          0,
+          this.rightTogglePercent,
+          percent
+        );
+        this.from =
+          this.min + (this.leftTogglePercent * (this.max - this.min)) / 100;
+
         this.renderLeftToggle();
-        this.calculateMinPrice();
         this.renderMinPrice();
       } else {
-        this.calculateRightTogglePercent(x, left, right);
+        this.rightTogglePercent = this.normalize(
+          this.leftTogglePercent,
+          100,
+          percent
+        );
+        this.to =
+          this.min + (this.rightTogglePercent * (this.max - this.min)) / 100;
+
         this.renderRightToggle();
-        this.calculateMaxPrice();
         this.renderMaxPrice();
       }
     };
