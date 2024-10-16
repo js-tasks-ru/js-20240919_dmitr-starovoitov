@@ -18,10 +18,13 @@ export default class SortableTableV2 extends SortableTableV1 {
     this.defaultSortedId = sorted.id;
     this.defaultSortedOrder = sorted.order;
 
-    this.sort(
+    this.appendArrow(
       this.element.querySelector(`[data-id="${this.defaultSortedId}"]`),
       this.defaultSortedOrder
     );
+    super.sort(this.defaultSortedId, this.defaultSortedOrder);
+
+    this.handleHeaderPointerDownVariable = this.handleHeaderPointerDown;
 
     this.createListeners();
   }
@@ -45,36 +48,39 @@ export default class SortableTableV2 extends SortableTableV1 {
 
     const currentOrder = headerCell.dataset.order;
 
-    this.sort(headerCell, currentOrder);
+    let order = this.defineOrder(headerCell, currentOrder);
+    this.appendArrow(headerCell, order);
+    super.sort(headerCell.dataset.id, order);
   };
 
-  sort(element, order = "desc") {
+  defineOrder(element, order) {
     if (element.lastElementChild === this.arrowElement) {
       if (order === "desc") {
-        order = "asc";
+        return "asc";
       } else {
-        order = "desc";
+        return "desc";
       }
+    } else {
+      return "desc";
     }
+  }
 
+  appendArrow(element, order) {
     element.setAttribute("data-order", order);
-
     element.appendChild(this.arrowElement);
-
-    super.sort(element.dataset.id, order);
   }
 
   createListeners() {
     this.subElements.header?.addEventListener(
       "pointerdown",
-      this.handleHeaderPointerDown
+      this.handleHeaderPointerDownVariable
     );
   }
 
   destroyListeners() {
     this.subElements.header?.removeEventListener(
       "pointerdown",
-      this.handleHeaderPointerDown
+      this.handleHeaderPointerDownVariable
     );
   }
 

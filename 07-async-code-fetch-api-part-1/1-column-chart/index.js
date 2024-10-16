@@ -9,7 +9,6 @@ export default class ColumnChartV2 extends ColumnChartV1 {
     this.enableLoader();
 
     const url = new URL(ORDERS_PATH, BACKEND_URL);
-    url.pathname;
     url.searchParams.set("from", startDate);
     url.searchParams.set("to", endDate);
 
