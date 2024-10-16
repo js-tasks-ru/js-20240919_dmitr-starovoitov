@@ -56,7 +56,6 @@ export default class SortableTableV3 extends SortableTableV2 {
     this.removeLoadingClass();
     this.isLoaded = false;
     this.render();
-    this.render1();
   }
 
   async loadFromServer() {
@@ -80,7 +79,6 @@ export default class SortableTableV3 extends SortableTableV2 {
     this.updateCurrentLoadStartAndEnd();
     this.removeLoadingClass();
     this.render();
-    this.render1();
   }
 
   saveCurrentSortedIdAndOrder(id, order) {
