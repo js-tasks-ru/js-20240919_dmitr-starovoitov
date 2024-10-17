@@ -72,6 +72,13 @@ export default class SortableTable {
             ? `<div class="sortable-table__cell">${item.title}</div>`
             : ""
         }
+        ${
+          item.status?.toString()
+            ? `<div class="sortable-table__cell">${
+                item.status === 1 ? "Active" : "Inactive"
+              }</div>`
+            : ""
+        }
       </a>`;
   }
 
