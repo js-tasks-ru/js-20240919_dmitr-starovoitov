@@ -24,7 +24,7 @@ export default class SortableTableV2 extends SortableTableV1 {
     );
     super.sort(this.defaultSortedId, this.defaultSortedOrder);
 
-    this.handleHeaderPointerDownVariable = this.handleHeaderPointerDown;
+    this.handleHeaderPointerDown = this.handleHeaderPointerDown.bind(this);
 
     this.createListeners();
   }
@@ -41,7 +41,7 @@ export default class SortableTableV2 extends SortableTableV1 {
         </span>`;
   }
 
-  handleHeaderPointerDown = (event) => {
+  handleHeaderPointerDown(event) {
     const headerCell = event.target.closest('[data-sortable="true"]');
 
     if (!headerCell || !this.subElements.header?.contains(headerCell)) return;
@@ -51,7 +51,7 @@ export default class SortableTableV2 extends SortableTableV1 {
     let order = this.defineOrder(headerCell, currentOrder);
     this.appendArrow(headerCell, order);
     super.sort(headerCell.dataset.id, order);
-  };
+  }
 
   defineOrder(element, order) {
     if (element.lastElementChild === this.arrowElement) {
@@ -73,14 +73,14 @@ export default class SortableTableV2 extends SortableTableV1 {
   createListeners() {
     this.subElements.header?.addEventListener(
       "pointerdown",
-      this.handleHeaderPointerDownVariable
+      this.handleHeaderPointerDown
     );
   }
 
   destroyListeners() {
     this.subElements.header?.removeEventListener(
       "pointerdown",
-      this.handleHeaderPointerDownVariable
+      this.handleHeaderPointerDown
     );
   }
 

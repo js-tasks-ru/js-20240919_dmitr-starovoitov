@@ -25,11 +25,7 @@ export default class SortableTableV3 extends SortableTableV2 {
 
     this.sortOnServer(this.defaultSortedId, this.defaultSortedOrder);
 
-    super.destroyListeners();
-
-    this.handleHeaderPointerDownVariable = this.handleHeaderPointerDown;
-
-    this.createListeners();
+    this.createScrollListeners();
   }
 
   sortOnClient(id, order) {
@@ -118,7 +114,7 @@ export default class SortableTableV3 extends SortableTableV2 {
     this.element.classList.remove("sortable-table_loading");
   }
 
-  handleHeaderPointerDown = (event) => {
+  handleHeaderPointerDown(event) {
     const headerCell = event.target.closest('[data-sortable="true"]');
 
     if (!headerCell || !this.subElements.header?.contains(headerCell)) return;
@@ -133,7 +129,7 @@ export default class SortableTableV3 extends SortableTableV2 {
     } else {
       this.sortOnServer(headerCell.dataset.id, order);
     }
-  };
+  }
 
   handleScroll = () => {
     if (
@@ -145,17 +141,16 @@ export default class SortableTableV3 extends SortableTableV2 {
     }
   };
 
-  createListeners() {
-    super.createListeners();
+  createScrollListeners() {
     window.addEventListener("scroll", this.handleScroll);
   }
 
-  destroyListeners() {
+  destroyScrollListeners() {
     window.removeEventListener("scroll", this.handleScroll);
   }
 
   destroy() {
     super.destroy();
-    this.destroyListeners();
+    this.destroyScrollListeners();
   }
 }
