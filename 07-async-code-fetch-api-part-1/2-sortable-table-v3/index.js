@@ -24,8 +24,6 @@ export default class SortableTableV3 extends SortableTableV2 {
     this.isSortLocally = isSortLocally;
 
     this.sortOnServer(this.defaultSortedId, this.defaultSortedOrder);
-
-    this.createScrollListeners();
   }
 
   sortOnClient(id, order) {
@@ -51,10 +49,12 @@ export default class SortableTableV3 extends SortableTableV2 {
     this.updateCurrentLoadStartAndEnd();
     this.removeLoadingClass();
     this.isLoaded = false;
-    this.render();
+    this.displayData();
   }
 
-  async loadFromServer() {
+  async render() {
+    this.isLoaded = true;
+
     const url = new URL(this.path, BACKEND_URL);
     url.searchParams.set("_embed", "subcategory.category");
     url.searchParams.set("_sort", this.currentSortedId);
@@ -74,7 +74,7 @@ export default class SortableTableV3 extends SortableTableV2 {
 
     this.updateCurrentLoadStartAndEnd();
     this.removeLoadingClass();
-    this.render();
+    this.displayData();
   }
 
   saveCurrentSortedIdAndOrder(id, order) {
@@ -87,7 +87,7 @@ export default class SortableTableV3 extends SortableTableV2 {
     this.loadEndCurrent = this.loadStartCurrent + this.loadStep;
   }
 
-  render() {
+  displayData() {
     if (this.data.length === 0) {
       this.addEmptyClass();
       return;
@@ -131,26 +131,28 @@ export default class SortableTableV3 extends SortableTableV2 {
     }
   }
 
-  handleScroll = () => {
+  handleScroll() {
     if (
       window.innerHeight + window.scrollY >= document.body.offsetHeight &&
       !this.isLoaded
     ) {
-      this.isLoaded = true;
-      this.loadFromServer();
+      this.render();
     }
-  };
+  }
 
-  createScrollListeners() {
+  createListeners() {
+    super.createListeners();
+    this.handleScroll = this.handleScroll.bind(this);
     window.addEventListener("scroll", this.handleScroll);
   }
 
-  destroyScrollListeners() {
+  destroyListeners() {
+    super.destroyListeners();
     window.removeEventListener("scroll", this.handleScroll);
   }
 
   destroy() {
     super.destroy();
-    this.destroyScrollListeners();
+    this.destroyListeners();
   }
 }
