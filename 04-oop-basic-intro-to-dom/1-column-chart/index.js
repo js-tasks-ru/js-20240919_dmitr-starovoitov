@@ -18,7 +18,7 @@ export default class ColumnChart {
     this.formatHeading = formatHeading;
 
     this.element = this.createElement();
-    this.updateChartLoadingState();
+    this.data.length !== 0 ? this.disableLoader() : this.enableLoader();
 
     this.subElements = {
       body: this.element.querySelector("[data-element='body']"),
@@ -81,18 +81,16 @@ export default class ColumnChart {
     return firstElementChild;
   }
 
-  updateChartLoadingState() {
-    if (this.data.length != 0) {
-      this.element.classList.remove("column-chart_loading");
-    } else {
-      this.element.classList.add("column-chart_loading");
-    }
+  enableLoader() {
+    this.element.classList.add("column-chart_loading");
+  }
+
+  disableLoader() {
+    this.element.classList.remove("column-chart_loading");
   }
 
   update(newData) {
     this.data = newData;
-
-    this.updateChartLoadingState();
 
     this.subElements.body.innerHTML = this.createChartTemplate();
     this.subElements.header.textContent = this.data.reduce((acc, current) => {

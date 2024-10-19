@@ -6,10 +6,9 @@ const ORDERS_PATH = "/api/dashboard/orders";
 
 export default class ColumnChartV2 extends ColumnChartV1 {
   async update(startDate, endDate) {
-    this.setChartLoadingState(true);
+    this.enableLoader();
 
     const url = new URL(ORDERS_PATH, BACKEND_URL);
-    url.pathname;
     url.searchParams.set("from", startDate);
     url.searchParams.set("to", endDate);
 
@@ -17,14 +16,8 @@ export default class ColumnChartV2 extends ColumnChartV1 {
 
     super.update(Object.values(responseData));
 
-    return responseData;
-  }
+    this.disableLoader();
 
-  setChartLoadingState(isLoading) {
-    if (!isLoading) {
-      this.element.classList.remove("column-chart_loading");
-    } else {
-      this.element.classList.add("column-chart_loading");
-    }
+    return responseData;
   }
 }
