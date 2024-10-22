@@ -56,24 +56,18 @@ export default class ProductForm {
 
   fillInFormData() {
     this.subElements.productForm.elements.title.value = this.productData.title;
-    this.subElements.productForm.elements.description.value = escapeHtml(
-      this.productData.description
-    );
-    this.subElements.productForm.elements.price.value = escapeHtml(
-      this.productData.price.toString()
-    );
-    this.subElements.productForm.elements.discount.value = escapeHtml(
-      this.productData.discount.toString()
-    );
-    this.subElements.productForm.elements.quantity.value = escapeHtml(
-      this.productData.quantity.toString()
-    );
-    this.subElements.productForm.elements.subcategory.value = escapeHtml(
-      this.productData.subcategory
-    );
-    this.subElements.productForm.elements.status.value = escapeHtml(
-      this.productData.status.toString()
-    );
+    this.subElements.productForm.elements.description.value =
+      this.productData.description;
+    this.subElements.productForm.elements.price.value =
+      this.productData.price.toString();
+    this.subElements.productForm.elements.discount.value = escapeHtml;
+    this.productData.discount.toString();
+    this.subElements.productForm.elements.quantity.value =
+      this.productData.quantity.toString();
+    this.subElements.productForm.elements.subcategory.value =
+      this.productData.subcategory;
+    this.subElements.productForm.elements.status.value =
+      this.productData.status.toString();
   }
 
   getUpdatedProduct() {
