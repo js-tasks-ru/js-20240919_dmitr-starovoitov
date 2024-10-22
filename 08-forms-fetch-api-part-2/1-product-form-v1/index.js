@@ -48,30 +48,30 @@ export default class ProductForm {
 
   fillInCategories() {
     this.categoriesMap.forEach((value, key) => {
-      this.subElements.productForm.subcategory.append(new Option(value, key));
+      this.subElements.productForm.elements.subcategory.append(
+        new Option(value, key)
+      );
     });
   }
 
   fillInFormData() {
-    this.subElements.productForm.title.value = escapeHtml(
-      this.productData.title
-    );
-    this.subElements.productForm.description.value = escapeHtml(
+    this.subElements.productForm.elements.title.value = this.productData.title;
+    this.subElements.productForm.elements.description.value = escapeHtml(
       this.productData.description
     );
-    this.subElements.productForm.price.value = escapeHtml(
+    this.subElements.productForm.elements.price.value = escapeHtml(
       this.productData.price.toString()
     );
-    this.subElements.productForm.discount.value = escapeHtml(
+    this.subElements.productForm.elements.discount.value = escapeHtml(
       this.productData.discount.toString()
     );
-    this.subElements.productForm.quantity.value = escapeHtml(
+    this.subElements.productForm.elements.quantity.value = escapeHtml(
       this.productData.quantity.toString()
     );
-    this.subElements.productForm.subcategory.value = escapeHtml(
+    this.subElements.productForm.elements.subcategory.value = escapeHtml(
       this.productData.subcategory
     );
-    this.subElements.productForm.status.value = escapeHtml(
+    this.subElements.productForm.elements.status.value = escapeHtml(
       this.productData.status.toString()
     );
   }
@@ -123,6 +123,14 @@ export default class ProductForm {
     };
 
     this.createListeners();
+  }
+
+  async save() {
+    this.element.dispatchEvent(
+      new CustomEvent("product-updated", {
+        bubbles: true,
+      })
+    );
   }
 
   handleSubmitFromUpdate = async (event) => {
@@ -187,8 +195,12 @@ export default class ProductForm {
     }
   }
 
-  destroy() {
+  remove() {
     this.element.remove();
+  }
+
+  destroy() {
+    this.remove();
     this.removeListeners();
   }
 
