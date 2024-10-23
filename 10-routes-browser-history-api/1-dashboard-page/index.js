@@ -47,35 +47,37 @@ export default class Page {
     await this.components.ordersChart.render();
     await this.components.salesChart.render();
     await this.components.customersChart.render();
-
-    this.subElements = {
-      rangePicker: this.components.rangePicker.element,
-      sortableTable: this.components.sortableTable.element,
-      ordersChart: this.components.ordersChart.element,
-      salesChart: this.components.salesChart.element,
-      customersChart: this.components.customersChart.element,
-    };
   }
 
   createElement() {
     const element = document.createElement("div");
     element.innerHTML = this.createTemplate();
 
-    element
-      .querySelector('[data-element="rangePicker"]')
-      .append(this.subElements.rangePicker);
-    element
-      .querySelector('[data-element="ordersChart"]')
-      .append(this.subElements.ordersChart);
-    element
-      .querySelector('[data-element="salesChart"]')
-      .append(this.subElements.salesChart);
-    element
-      .querySelector('[data-element="customersChart"]')
-      .append(this.subElements.customersChart);
-    element
-      .querySelector('[data-element="sortableTable"]')
-      .append(this.subElements.sortableTable);
+    this.subElements = {
+      rangePicker: element.querySelector('[data-element="rangePicker"]'),
+      sortableTable: element.querySelector('[data-element="sortableTable"]'),
+      ordersChart: element.querySelector('[data-element="ordersChart"]'),
+      salesChart: element.querySelector('[data-element="salesChart"]'),
+      customersChart: element.querySelector('[data-element="customersChart"]'),
+    };
+
+    this.subElements.sortableTable.appendChild(
+      this.components.sortableTable.element
+    );
+
+    this.subElements.rangePicker.appendChild(
+      this.components.rangePicker.element
+    );
+
+    this.subElements.ordersChart.appendChild(
+      this.components.ordersChart.element
+    );
+
+    this.subElements.salesChart.appendChild(this.components.salesChart.element);
+
+    this.subElements.customersChart.appendChild(
+      this.components.customersChart.element
+    );
 
     this.element = element.firstElementChild;
   }
@@ -126,6 +128,11 @@ export default class Page {
   }
 
   destroy() {
+    this.components.rangePicker.destroy();
+    this.components.ordersChart.destroy();
+    this.components.salesChart.destroy();
+    this.components.customersChart.destroy();
+    this.components.sortableTable.destroy();
     this.remove();
     this.removeListeners();
   }
