@@ -6,6 +6,7 @@
     margin: 0;
     padding: 50px 0;
   }
+
   .container {
     display: flex;
     justify-content: flex-end;
@@ -17,14 +18,16 @@
 
 <link rel="stylesheet" href="style.css">
 
-<div id="holder" class="container"></div>
+<body>
+  <div id="holder" class="container"></div>
+</body>
 
 <script type="module">
   import RangePicker from './index.js';
 
   const rangePicker = new RangePicker({
-    from: new Date(2019, 9, 2),
-    to: new Date(2019, 10, 5)
+    from: new Date(2024, 9, 2),
+    to: new Date(2024, 10, 5)
   });
 
   holder.append(rangePicker.element);
