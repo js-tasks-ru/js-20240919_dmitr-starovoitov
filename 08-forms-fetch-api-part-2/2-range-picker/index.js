@@ -11,16 +11,16 @@ export default class RangePicker {
       from: this.element.querySelector('[data-element="from"]'),
       to: this.element.querySelector('[data-element="to"]'),
       input: this.element.querySelector('[data-element="input"]'),
-      calendarFirst: this.element.querySelectorAll(".rangepicker__calendar")[0],
-      calendarSecond: this.element.querySelectorAll(
-        ".rangepicker__calendar"
-      )[1],
-      selector: this.element?.querySelector(".rangepicker__selector"),
+      selector: this.element.querySelector(".rangepicker__selector"),
     };
 
     this.firstMonthDate = new Date(from);
 
-    this.renderCalendars();
+    this.createInputListeners();
+  }
+
+  renderSelector() {
+    this.subElements.selector.innerHTML = this.createSelectorTemplate();
 
     this.subElements.leftArrow = this.element.querySelector(
       ".rangepicker__selector-control-left"
@@ -28,6 +28,14 @@ export default class RangePicker {
     this.subElements.rightArrow = this.element.querySelector(
       ".rangepicker__selector-control-right"
     );
+    this.subElements.calendarFirst = this.element.querySelectorAll(
+      ".rangepicker__calendar"
+    )[0];
+    this.subElements.calendarSecond = this.element.querySelectorAll(
+      ".rangepicker__calendar"
+    )[1];
+
+    this.renderCalendars();
 
     this.updateMonthArrays();
 
@@ -40,7 +48,7 @@ export default class RangePicker {
 
     this.setBetween();
 
-    this.createListeners();
+    this.createSelectorListeners();
   }
 
   createElement() {
@@ -49,21 +57,23 @@ export default class RangePicker {
     this.element = element.firstElementChild;
   }
 
+  createSelectorTemplate() {
+    return ` <div class="rangepicker__selector-arrow"></div>
+      <div class="rangepicker__selector-control-left"></div>
+      <div class="rangepicker__selector-control-right"></div>
+      <div class="rangepicker__calendar">
+      </div>
+      <div class="rangepicker__calendar">
+      </div>`;
+  }
+
   createTemplate() {
     return `<div class="rangepicker">
     <div class="rangepicker__input" data-element="input">
       <span data-element="from">${this.formatDate(this.from)}</span> -
       <span data-element="to">${this.formatDate(this.to)}</span>
     </div>
-    <div class="rangepicker__selector" data-element="selector">
-      <div class="rangepicker__selector-arrow"></div>
-      <div class="rangepicker__selector-control-left"></div>
-      <div class="rangepicker__selector-control-right"></div>
-      <div class="rangepicker__calendar">
-      </div>
-      <div class="rangepicker__calendar">
-      </div>
-    </div>
+    <div class="rangepicker__selector" data-element="selector"></div>
     </div>`;
   }
 
@@ -72,9 +82,7 @@ export default class RangePicker {
   }
 
   formatDate(date) {
-    return date
-      .toLocaleString("ru", { dateStyle: "short" })
-      .replaceAll(".", "/");
+    return date.toLocaleString("ru", { dateStyle: "short" });
   }
 
   updateDateInputs() {
@@ -99,6 +107,7 @@ export default class RangePicker {
     if (!input || !this.subElements.input === input) return;
 
     if (!this.isRangePickerOpened()) {
+      this.renderSelector();
       this.openRangePicker();
     } else {
       this.closeRangePicker();
@@ -199,9 +208,7 @@ export default class RangePicker {
     );
   }
 
-  createListeners() {
-    document.addEventListener("click", this.handleDocumentClick, true);
-    this.subElements.input.addEventListener("click", this.handleInputClick);
+  createSelectorListeners() {
     this.subElements.leftArrow.addEventListener(
       "click",
       this.handleLeftArrowClick
@@ -213,21 +220,29 @@ export default class RangePicker {
     this.subElements.selector.addEventListener("click", this.handleCellClick);
   }
 
-  removeListeners() {
-    document.removeEventListener("click", this.handleDocumentClick, true);
-    this.subElements.input.removeEventListener("click", this.handleInputClick);
-    this.subElements.leftArrow.removeEventListener(
+  createInputListeners() {
+    document.addEventListener("click", this.handleDocumentClick, true);
+    this.subElements.input.addEventListener("click", this.handleInputClick);
+  }
+
+  removeSelectorListeners() {
+    this.subElements.leftArrow?.removeEventListener(
       "click",
       this.handleLeftArrowClick
     );
-    this.subElements.rightArrow.removeEventListener(
+    this.subElements.rightArrow?.removeEventListener(
       "click",
       this.handleRightArrowClick
     );
-    this.subElements.selector.removeEventListener(
+    this.subElements.selector?.removeEventListener(
       "click",
       this.handleCellClick
     );
+  }
+
+  removeInputListeners() {
+    document.removeEventListener("click", this.handleDocumentClick, true);
+    this.subElements.input.removeEventListener("click", this.handleInputClick);
   }
 
   getDaysInMonth(month, year) {
@@ -389,7 +404,8 @@ export default class RangePicker {
   }
 
   destroy() {
-    this.removeListeners();
+    this.removeInputListeners();
+    this.removeSelectorListeners();
     this.remove();
   }
 }
