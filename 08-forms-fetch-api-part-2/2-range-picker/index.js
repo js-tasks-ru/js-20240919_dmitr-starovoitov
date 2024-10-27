@@ -35,9 +35,10 @@ export default class RangePicker {
 
     this.setFromDate(this.from);
     this.setToDate(this.to);
-    this.setBetween();
 
     this.isSelected = true;
+
+    this.setBetween();
 
     this.createListeners();
   }
@@ -165,8 +166,9 @@ export default class RangePicker {
       this.from = newDate;
 
       this.setFromDate(this.from);
+
       this.isSelected = false;
-    } else if (this.cellIndexTo === null) {
+    } else {
       let newDate = new Date(cell.getAttribute("data-value"));
       newDate.setDate(newDate.getDate() - 1);
 
@@ -180,11 +182,12 @@ export default class RangePicker {
       }
 
       this.setToDate(this.to);
+      this.isSelected = true;
       this.setBetween();
       this.updateDateInputs();
-      this.isSelected = true;
 
       this.dispatchSelectEvent();
+      this.closeRangePicker();
     }
   };
 
@@ -259,9 +262,6 @@ export default class RangePicker {
     const cellIndex = this.getCellIndexByDate(date, allCellsArr);
     if (cellIndex !== -1) {
       allCellsArr[cellIndex].classList.add("rangepicker__selected-from");
-      this.cellIndexFrom = cellIndex;
-    } else {
-      this.cellIndexFrom = null;
     }
   }
 
@@ -270,28 +270,21 @@ export default class RangePicker {
     const cellIndex = this.getCellIndexByDate(date, allCellsArr);
     if (cellIndex !== -1) {
       allCellsArr[cellIndex].classList.add("rangepicker__selected-to");
-      this.cellIndexTo = cellIndex;
-    } else {
-      this.cellIndexTo = null;
     }
   }
 
   setBetween() {
     const allCellsArr = this.getAllCellsArr();
-    if (this.cellIndexFrom !== null && this.cellIndexTo != null) {
-      allCellsArr
-        .slice(this.cellIndexFrom + 1, this.cellIndexTo)
-        .forEach((cell) => cell.classList.add("rangepicker__selected-between"));
-    } else if (!this.cellIndexFrom) {
-      allCellsArr
-        .slice(0, this.cellIndexTo)
-        .forEach((cell) => cell.classList.add("rangepicker__selected-between"));
-    } else if (!this.cellIndexTo) {
-      allCellsArr
-        .slice(this.cellIndexFrom + 1, allCellsArr.length)
-        .forEach((cell) => cell.classList.add("rangepicker__selected-between"));
+
+    if (this.isSelected) {
+      allCellsArr.forEach((cell) => {
+        let date = new Date(cell.getAttribute("data-value"));
+        date.setDate(date.getDate() - 1);
+        if (date > this.from && date < this.to) {
+          cell.classList.add("rangepicker__selected-between");
+        }
+      });
     }
-    return;
   }
 
   clearSelectedRange() {
