@@ -55,17 +55,21 @@ export default class SortableList {
 
     const targetItem = grabElem.closest("li");
 
+    targetItem.ondragstart = function () {
+      return false;
+    };
+
     let shiftX = event.clientX - targetItem.getBoundingClientRect().left;
     let shiftY = event.clientY - targetItem.getBoundingClientRect().top;
 
     this.addStylesForDraggingItem(targetItem);
-    moveAt(event.pageX, event.pageY);
+    moveAt(event.clientX, event.clientY);
 
     this.createPlaceholderElement(targetItem);
     targetItem.before(this.placeholderElement);
 
     const handlePointerMove = (event) => {
-      moveAt(event.pageX, event.pageY);
+      moveAt(event.clientX, event.clientY);
 
       targetItem.style.display = "none";
 
@@ -77,11 +81,11 @@ export default class SortableList {
 
       if (!elemBelow) return;
 
-      if (elemBelow.getBoundingClientRect().top + shiftY <= event.pageY) {
+      if (elemBelow.getBoundingClientRect().top + shiftY <= event.clientY) {
         elemBelow.after(this.placeholderElement);
       } else if (
         elemBelow.getBoundingClientRect().top >=
-        event.pageY - shiftY
+        event.clientY - shiftY
       ) {
         elemBelow.before(this.placeholderElement);
       }
@@ -96,9 +100,9 @@ export default class SortableList {
       document.removeEventListener("pointerup", handlePointerUp);
     };
 
-    function moveAt(pageX, pageY) {
-      targetItem.style.left = pageX - shiftX + "px";
-      targetItem.style.top = pageY - shiftY + "px";
+    function moveAt(clientX, clientY) {
+      targetItem.style.left = clientX - shiftX + "px";
+      targetItem.style.top = clientY - shiftY + "px";
     }
 
     document.addEventListener("pointermove", handlePointerMove);

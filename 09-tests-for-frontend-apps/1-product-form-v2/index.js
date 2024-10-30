@@ -16,12 +16,12 @@ export default class ProductForm extends ProductFormV1 {
     await super.render();
     const listContainer = this.element.querySelector(".sortable-list");
     listContainer.innerHTML = "";
-    this.createSortableList();
+    this.initSortableList();
     listContainer.append(this.sortableList.element);
     return this.element;
   }
 
-  createSortableList() {
+  initSortableList() {
     this.sortableList = new SortableList({
       items: this.productData.images.map((img) => {
         const element = document.createElement("li");

@@ -14,6 +14,7 @@
     const sortableList = new SortableList({
       items: data.map(item => {
         const element = document.createElement('li');
+        element.classList.add('sortable-list__item');
         element.innerHTML = `
         <span data-grab-handle>${item} drag me!</span>
         <span data-delete-handle>${item} delete me!</spa>
